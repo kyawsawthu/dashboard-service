@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: dashboard-service
+  # Same amd64/arm64 targets as hashicorp/demo-consul-101 releases.
+  TARGETS: >-
+    darwin/amd64
+    darwin/arm64
+    freebsd/amd64
+    linux/amd64
+    linux/arm64
+    solaris/amd64
+    windows/amd64
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Embed web assets
+        run: |
+          go install github.com/GeertJohan/go.rice/rice@v1.0.2
+          rice embed-go
+
+      - name: Build zips
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          mkdir -p build zips
+          for target in $TARGETS; do
+            os=${target%/*}
+            arch=${target#*/}
+            bin="${APP_NAME}_${os}_${arch}"
+            [ "$os" = windows ] && bin="${bin}.exe"
+            GOOS=$os GOARCH=$arch go build -trimpath -ldflags="-s -w" -o "build/${bin}" .
+            zip -j "zips/${bin}.zip" "build/${bin}"
+          done
+          cd zips && sha256sum *.zip > SHA256SUMS.txt
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" zips/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes
