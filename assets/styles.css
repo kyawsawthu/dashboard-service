@@ -1,6 +1,6 @@
 /*
   pink (light to dark)
-  #306060
+  #654321
   #9e225a
   #771944
   #4f112d
@@ -12,11 +12,11 @@
 */
 
 body {
-  background: #306060;
-  background: -moz-linear-gradient(-45deg, #306060 0%, #771944 100%);
-  background: -webkit-linear-gradient(-45deg, #306060 0%,#771944 100%);
-  background: linear-gradient(135deg, #306060 0% ,#771944 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#306060', endColorstr='#771944',GradientType=1 );
+  background: #654321;
+  background: -moz-linear-gradient(-45deg, #654321 0%, #771944 100%);
+  background: -webkit-linear-gradient(-45deg, #654321 0%,#771944 100%);
+  background: linear-gradient(135deg, #654321 0% ,#771944 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#654321', endColorstr='#771944',GradientType=1 );
 
   /* height: 100%; /* Firefox background fix */ */
 
